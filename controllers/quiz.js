@@ -153,3 +153,50 @@ exports.check = (req, res, next) => {
         answer
     });
 };
+
+exports.randomplay = (req, res, next) => {
+
+    req.session.randomPlay = req.session.randomPlay || [];
+    req.session.score =  req.session.score || 0;
+    const randomPlay = req.session.randomPlay;
+    const score = req.session.score
+    models.quiz.findOne({where: {id: {[Sequelize.Op.notIn] : randomPlay }} ,order: [Sequelize.fn('RANDOM')] })
+        .then(quiz => {
+            if (quiz){
+                req.session.randomPlay.push(quiz.id);
+                res.render('quizzes/random_play', {quiz, score });
+            }
+            else {
+                delete req.session.randomPlay;
+                delete req.session.score;
+                res.render('quizzes/random_nomore', {score});
+            }
+        })
+        .catch(error => next(error));
+};
+
+exports.randomcheck = (req, res, next) => {
+
+    let score = req.session.score;
+
+    models.quiz.findById(req.quiz.id)
+        .then(quiz =>{
+
+            if(quiz.answer === req.query['answer']){
+                req.session.score++;
+                score = req.session.score;
+                req.session.result = true;
+            } else {
+                delete req.session.randomPlay;
+                req.session.score = 0;
+                req.session.result = false;
+            }
+
+            res.render('quizzes/random_result', {
+                score: score,
+                answer: req.query['answer'],
+                result: req.session.result
+            });
+        })
+        .catch(error => next(error));
+};
