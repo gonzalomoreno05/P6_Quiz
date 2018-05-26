@@ -43,7 +43,7 @@ router.get([
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-    res.render('index');
+  res.render('index');
 });
 
 // Author page.
@@ -62,6 +62,9 @@ router.param('tipId',  tipController.load);
 router.get('/session',    sessionController.new);     // login form
 router.post('/session',   sessionController.create);  // create sesion
 router.delete('/session', sessionController.destroy); // close sesion
+
+router.get('/quizzes/randomplay',          quizController.randomplay);
+router.get('/quizzes/randomcheck/:quizId(\\d+)',       quizController.randomcheck)
 
 
 // Routes for the resource /users
@@ -119,10 +122,6 @@ router.delete('/quizzes/:quizId(\\d+)',
 
 router.get('/quizzes/:quizId(\\d+)/play',  quizController.play);
 router.get('/quizzes/:quizId(\\d+)/check', quizController.check);
-
-router.get('/quizzes/randomplay', quizController.randomplay);
-router.get('/quizzes/randomcheck/:quizId(\\d+)', quizController.randomcheck);
-
 
 
 
