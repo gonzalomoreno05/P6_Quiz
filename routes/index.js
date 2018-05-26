@@ -63,6 +63,9 @@ router.get('/session',    sessionController.new);     // login form
 router.post('/session',   sessionController.create);  // create sesion
 router.delete('/session', sessionController.destroy); // close sesion
 
+router.get('/quizzes/randomplay',          quizController.randomplay);
+router.get('/quizzes/randomcheck/:quizId(\\d+)',       quizController.randomcheck)
+
 
 // Routes for the resource /users
 router.get('/users',

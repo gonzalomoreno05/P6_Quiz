@@ -25,6 +25,24 @@ sequelize.import(path.join(__dirname,'user'));
 // Session
 sequelize.import(path.join(__dirname,'session'));
 
+// Create tables
+sequelize.sync()
+.then(() => sequelize.models.quiz.count())
+.then(count => {
+    if(!count){
+        return sequelize.models.quiz.bulkCreate([
+            { question: "Capital de Italia: ", answer: "Roma"},
+            { question: "Capital de Francia: ", answer: "París"},
+            { question: "Capital de España: ", answer: "Madrid"},
+            { question: "Capital de Portugal: ", answer: "Lisboa"}
+            ]);
+    }
+
+})
+.catch(error =>{
+    console.log(error);
+});
+
 
 // Relation between models
 
@@ -37,5 +55,7 @@ quiz.hasMany(tip);
 user.hasMany(quiz, {foreignKey: 'authorId'});
 quiz.belongsTo(user, {as: 'author', foreignKey: 'authorId'});
 
+user.hasMany(tip, {foreignKey: 'authorId'});
+tip.belongsTo(user, {as: 'author', foreignKey: 'authorId'});
 
 module.exports = sequelize;
