@@ -63,9 +63,6 @@ router.get('/session',    sessionController.new);     // login form
 router.post('/session',   sessionController.create);  // create sesion
 router.delete('/session', sessionController.destroy); // close sesion
 
-router.get('/quizzes/randomplay',          quizController.randomplay);
-router.get('/quizzes/randomcheck/:quizId(\\d+)',       quizController.randomcheck)
-
 
 // Routes for the resource /users
 router.get('/users',
@@ -95,6 +92,10 @@ router.get('/users/:userId(\\d+)/quizzes',
     sessionController.loginRequired,
     quizController.index);
 
+router.param('quizId', quizController.load);  // OJO
+
+
+
 
 // Routes for the resource /quizzes
 router.get('/quizzes',
@@ -123,6 +124,8 @@ router.delete('/quizzes/:quizId(\\d+)',
 router.get('/quizzes/:quizId(\\d+)/play',  quizController.play);
 router.get('/quizzes/:quizId(\\d+)/check', quizController.check);
 
+router.get('/quizzes/randomplay', quizController.randomplay);
+router.get('/quizzes/randomcheck/:quizId(\\d+)', quizController.randomcheck);
 
 
 router.post('/quizzes/:quizId(\\d+)/tips',
