@@ -1,3 +1,4 @@
+
 const crypt = require('../helpers/crypt');
 
 // Definition of the User model:
@@ -33,3 +34,4 @@ module.exports = function (sequelize, DataTypes) {
 
     return User;
 };
+

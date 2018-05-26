@@ -20,15 +20,20 @@ exports.load = (req, res, next, tipId) => {
 
 // POST /quizzes/:quizId/tips
 exports.create = (req, res, next) => {
+
+    if (req.session.user === undefined){
+        res.redirect('session/new');
+    }
  
+    const authorId = req.session.user && req.session.user.id;
     const tip = models.tip.build(
         {
             text: req.body.text,
             quizId: req.quiz.id,
-            authorId: req.session.user && req.session.user.id || 0
+            authorId: authorId
         });
 
-    tip.save({fields: ["text", "quizId", "authorId"]})
+    tip.save()
     .then(tip => {
         req.flash('success', 'Tip created successfully.');
         res.redirect("back");
@@ -74,3 +79,4 @@ exports.destroy = (req, res, next) => {
     })
     .catch(error => next(error));
 };
+

@@ -1,3 +1,4 @@
+
 <h1>
     Random Play:
 </h1>
@@ -12,10 +13,11 @@
 
 <p>
     <% if (!result) { %>
-    Has perdido.
-    <a href="/quizzes"> Fin del juego </a>
+    You have failed.
+    <a href="/quizzes"> End of Play </a>
     <% } else { %>
-    Has ganado. Bravo!
-    <a href="/quizzes/randomplay"><button>Sigue jugando</button></a>
+    You have succeeded.
+    <a href="/quizzes/randomplay"><button>Continue playing</button></a>
     <% } %>
 </p>
+
