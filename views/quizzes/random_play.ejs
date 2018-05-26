@@ -3,13 +3,13 @@
 </h1>
 
 <div>
-    Successful answers = <span id="score"><%= score %></span>
+    Preguntas correctas = <span id="score"><%= score %></span>
 </div>
 
 <form method="get" action="/quizzes/randomcheck/<%= quiz.id %>">
 
     <p>
-        Question: <b><%= quiz.question %></b>
+        Pregunta: <b><%= quiz.question %></b>
     </p>
 
 
@@ -18,4 +18,3 @@
         <input type="submit" class="itemNarrow" id="send" value="Check">
     </div>
 </form>
-
