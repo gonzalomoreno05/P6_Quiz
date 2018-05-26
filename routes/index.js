@@ -92,10 +92,6 @@ router.get('/users/:userId(\\d+)/quizzes',
     sessionController.loginRequired,
     quizController.index);
 
-router.param('quizId', quizController.load);  // OJO
-
-
-
 
 // Routes for the resource /quizzes
 router.get('/quizzes',
@@ -124,8 +120,9 @@ router.delete('/quizzes/:quizId(\\d+)',
 router.get('/quizzes/:quizId(\\d+)/play',  quizController.play);
 router.get('/quizzes/:quizId(\\d+)/check', quizController.check);
 
-router.get('/quizzes/randomplay', quizController.randomplay);
-router.get('/quizzes/randomcheck/:quizId(\\d+)', quizController.randomcheck);
+router.get('/quizzes/randomcheck/:quizId(\\d+)',  quizController.randomcheck);
+router.get('/quizzes/randomplay',  quizController.randomplay);
+
 
 
 router.post('/quizzes/:quizId(\\d+)/tips',
@@ -139,6 +136,16 @@ router.delete('/quizzes/:quizId(\\d+)/tips/:tipId(\\d+)',
     sessionController.loginRequired,
     quizController.adminOrAuthorRequired,
     tipController.destroy);
+
+router.get('/quizzes/:quizId/tips/:tipId/edit',
+    sessionController.loginRequired,
+    quizController.adminOrAuthorRequired,
+	tipController.edit);
+
+router.put('/quizzes/:quizId/tips/:tipId',
+    sessionController.loginRequired,
+    quizController.adminOrAuthorRequired,
+    tipController.update);
 
 
 module.exports = router;

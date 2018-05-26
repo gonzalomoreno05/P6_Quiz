@@ -9,7 +9,7 @@ const Sequelize = require('sequelize');
 // To use  Heroku Postgres data base:
 //    DATABASE_URL = postgres://user:passwd@host:port/database
 
-const url = process.env.DATABASE_URL || "sqlite:quiz.sqlite"; // He cambiado quizzes por quiz otra vez
+const url = process.env.DATABASE_URL || "sqlite:quiz.sqlite";
 
 const sequelize = new Sequelize(url);
 
@@ -36,10 +36,34 @@ quiz.hasMany(tip);
 // Relation 1-to-N between User and Quiz:
 user.hasMany(quiz, {foreignKey: 'authorId'});
 quiz.belongsTo(user, {as: 'author', foreignKey: 'authorId'});
-
-// Relation 1-to-N between User and Quiz:
 user.hasMany(tip, {foreignKey: 'authorId'});
 tip.belongsTo(user, {as: 'author', foreignKey: 'authorId'});
+
+sequelize.sync()
+    .then(()=> sequelize.models.quiz.count())
+    .then(count => {
+        if(!count) {
+            return sequelize.models.quiz.bulkCreate([
+                {question: "Capital de Italia", answer: "Roma"},
+                {question: "Capital de Francia", answer: "París"},
+                {question: "Capital de España", answer: "Madrid"},
+                {question: "Capital de Portugal", answer: "Lisboa"}
+            ]);
+        }
+    })
+    .catch(error => {
+        console.log(error);
+    });
+
+
+// Create tables
+sequelize.sync()
+.then(() => console.log('Data Bases created successfully'))
+.catch(error => {
+    console.log("Error creating the data base tables:", error);
+    process.exit(1);
+});
+
 
 
 module.exports = sequelize;

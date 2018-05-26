@@ -7,12 +7,18 @@
         <% var isAdmin = session.user && session.user.isAdmin; %>
         <% var isQuizAuthor = session.user && quizAuthorId && quizAuthorId === session.user.id; %>
 
+
+
+        <% var isTipAuthor = session.user && tip.authorId===session.user.id %>
+
+
+
         <% if (accepted || isAdmin || isQuizAuthor) { %>
 
             <li>
                 <%= tip.text %>
 
-                <small>(by <%= tip.author ? tip.author.username : "Anonymous" %>)</small>
+                <small> (by <%= quiz.author ? quiz.author.username : "Anonymous" %>) </small>
 
                 <% if (!accepted && (isAdmin || isQuizAuthor)) { %>
 
@@ -22,13 +28,21 @@
 
                 <% } %>
 
-                <% if (isAdmin || isQuizAuthor) { %>
 
-                    <a href="/quizzes/<%= quizId %>/tips/<%= tip.id %>?_method=DELETE">
-                        <button>Delete</button>
-                    </a>
 
+
+
+                <% if (isAdmin || isTipAuthor) { %>
+                <a href="/quizzes/<%=quiz.id%>/tips/<%=tip.id%>/edit">
+                    <button>Edit</button>
+                </a>
+
+                <a href="/quizzes/<%= quizId %>/tips/<%= tip.id %>?_method=DELETE">
+                    <button>Delete</button>
+                </a>
                 <% } %>
+
+
             </li>
         <% } %>
     <% } %>
