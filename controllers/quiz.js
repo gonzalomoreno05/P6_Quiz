@@ -7,6 +7,7 @@ const paginate = require('../helpers/paginate').paginate;
 // Autoload the quiz with id equals to :quizId
 exports.load = (req, res, next, quizId) => {
 
+<<<<<<< HEAD
     models.quiz.findById(quizId, {
         include: [
             models.tip,
@@ -22,6 +23,18 @@ exports.load = (req, res, next, quizId) => {
         }
     })
     .catch(error => next(error));
+=======
+    models.quiz.findById(quizId)
+        .then(quiz => {
+            if (quiz) {
+                req.quiz = quiz;
+                next();
+            } else {
+                throw new Error('There is no quiz with id=' + quizId);
+            }
+        })
+        .catch(error => next(error));
+>>>>>>> practica6
 };
 
 
@@ -43,6 +56,7 @@ exports.adminOrAuthorRequired = (req, res, next) => {
 // GET /quizzes
 exports.index = (req, res, next) => {
 
+<<<<<<< HEAD
     let countOptions = {
         where: {}
     };
@@ -94,6 +108,13 @@ exports.index = (req, res, next) => {
         });
     })
     .catch(error => next(error));
+=======
+    models.quiz.findAll()
+        .then(quizzes => {
+            res.render('quizzes/index.ejs', {quizzes});
+        })
+        .catch(error => next(error));
+>>>>>>> practica6
 };
 
 
@@ -110,7 +131,7 @@ exports.show = (req, res, next) => {
 exports.new = (req, res, next) => {
 
     const quiz = {
-        question: "", 
+        question: "",
         answer: ""
     };
 
@@ -131,6 +152,7 @@ exports.create = (req, res, next) => {
     });
 
     // Saves only the fields question and answer into the DDBB
+<<<<<<< HEAD
     quiz.save({fields: ["question", "answer", "authorId"]})
     .then(quiz => {
         req.flash('success', 'Quiz created successfully.');
@@ -145,6 +167,22 @@ exports.create = (req, res, next) => {
         req.flash('error', 'Error creating a new Quiz: ' + error.message);
         next(error);
     });
+=======
+    quiz.save({fields: ["question", "answer"]})
+        .then(quiz => {
+            req.flash('success', 'Quiz created successfully.');
+            res.redirect('/quizzes/' + quiz.id);
+        })
+        .catch(Sequelize.ValidationError, error => {
+            req.flash('error', 'There are errors in the form:');
+            error.errors.forEach(({message}) => req.flash('error', message));
+            res.render('quizzes/new', {quiz});
+        })
+        .catch(error => {
+            req.flash('error', 'Error creating a new Quiz: ' + error.message);
+            next(error);
+        });
+>>>>>>> practica6
 };
 
 
@@ -166,19 +204,19 @@ exports.update = (req, res, next) => {
     quiz.answer = body.answer;
 
     quiz.save({fields: ["question", "answer"]})
-    .then(quiz => {
-        req.flash('success', 'Quiz edited successfully.');
-        res.redirect('/quizzes/' + quiz.id);
-    })
-    .catch(Sequelize.ValidationError, error => {
-        req.flash('error', 'There are errors in the form:');
-        error.errors.forEach(({message}) => req.flash('error', message));
-        res.render('quizzes/edit', {quiz});
-    })
-    .catch(error => {
-        req.flash('error', 'Error editing the Quiz: ' + error.message);
-        next(error);
-    });
+        .then(quiz => {
+            req.flash('success', 'Quiz edited successfully.');
+            res.redirect('/quizzes/' + quiz.id);
+        })
+        .catch(Sequelize.ValidationError, error => {
+            req.flash('error', 'There are errors in the form:');
+            error.errors.forEach(({message}) => req.flash('error', message));
+            res.render('quizzes/edit', {quiz});
+        })
+        .catch(error => {
+            req.flash('error', 'Error editing the Quiz: ' + error.message);
+            next(error);
+        });
 };
 
 
@@ -186,6 +224,7 @@ exports.update = (req, res, next) => {
 exports.destroy = (req, res, next) => {
 
     req.quiz.destroy()
+<<<<<<< HEAD
     .then(() => {
         req.flash('success', 'Quiz deleted successfully.');
         res.redirect('/goback');
@@ -194,6 +233,16 @@ exports.destroy = (req, res, next) => {
         req.flash('error', 'Error deleting the Quiz: ' + error.message);
         next(error);
     });
+=======
+        .then(() => {
+            req.flash('success', 'Quiz deleted successfully.');
+            res.redirect('/quizzes');
+        })
+        .catch(error => {
+            req.flash('error', 'Error deleting the Quiz: ' + error.message);
+            next(error);
+        });
+>>>>>>> practica6
 };
 
 
@@ -225,3 +274,61 @@ exports.check = (req, res, next) => {
         answer
     });
 };
+
+
+
+exports.randomplay=(req,res,next)=>{
+    if(req.session.randomplay===undefined){
+        req.session.randomplay=[];
+    }
+    const whereOpt={"id":{[Sequelize.Op.notIn]:req.session.randomplay}};
+    return models.quiz.count({where:whereOpt})
+        .then(count=>{
+            if(!count){
+                let score=req.session.randomplay.length;
+                req.session.randomplay=[];
+                res.render('quizzes/random_nomore',{score:score});
+            }
+
+            let ran =Math.floor(Math.random()*count);
+            return models.quiz.findAll({where:whereOpt,offset:ran,limit:1})
+                .then(quizzes=>{
+                    return quizzes[0];
+                });
+
+        })
+        .then(quiz=>{
+            let score =req.session.randomplay.length;
+            res.render('quizzes/random_play',{quiz,score});
+        })
+
+        .catch(error=>{
+            req.flash('error','Error al ejecutar randomplay: '+ error.message);
+            next(error);
+        })
+
+}
+
+exports.randomcheck=(req,res,next)=>{
+
+    const {query,quiz}=req;
+
+    const answer = query.answer|| "";
+    const result = answer.toLowerCase().trim() === quiz.answer.toLowerCase().trim();
+
+
+    if(result) {
+        if (req.session.randomplay.indexOf(quiz.id === -1)) {
+            req.session.randomplay.push(quiz.id);
+        }
+        let score =req.session.randomplay.length;
+        res.render('quizzes/random_result',{score,answer:answer,result:result});
+    }else {
+        let score =req.session.randomplay.length;
+        req.session.randomplay=[] ;
+        res.render('quizzes/random_result',{score,answer:answer,result:result});
+
+    }
+
+}
+

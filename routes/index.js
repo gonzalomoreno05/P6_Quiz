@@ -43,7 +43,7 @@ router.get([
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  res.render('index');
+    res.render('index');
 });
 
 // Author page.
@@ -119,6 +119,10 @@ router.delete('/quizzes/:quizId(\\d+)',
 
 router.get('/quizzes/:quizId(\\d+)/play',  quizController.play);
 router.get('/quizzes/:quizId(\\d+)/check', quizController.check);
+
+router.get('/quizzes/randomplay', quizController.randomplay);
+router.get('/quizzes/randomcheck/:quizId(\\d+)', quizController.randomcheck);
+
 
 
 
