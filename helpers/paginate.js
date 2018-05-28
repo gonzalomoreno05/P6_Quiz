@@ -1,9 +1,9 @@
-const urlm = require('url');
+var urlm = require('url');
 
 
 function addPagenoToUrl(url, pageno, _param_name) {
-    const param_name = _param_name ? _param_name : "pageno";
-    const urlObj = urlm.parse(url, true);
+    var param_name = _param_name ? _param_name : "pageno";
+    var urlObj = urlm.parse(url, true);
 
     urlObj.query[param_name] = pageno;
 
@@ -13,49 +13,49 @@ function addPagenoToUrl(url, pageno, _param_name) {
 }
 
 
-// Helper function used to paginate.
-// Return the HTML links used to paginate.
+// Funcion de ayuda para paginar.
+// Devuelve un fragmento HTML con los enlaces para paginar.
 // 
-exports.paginate = (totalItems, itemsPerPage, currentPage, url, param_name) => {
+exports.paginate = function (totalItems, itemsPerPage, currentPage, url, param_name) {
 
     if (totalItems <= itemsPerPage) {
         return false;
     }
 
-    const total = Math.ceil(totalItems / itemsPerPage);
+    var total = Math.ceil(totalItems / itemsPerPage);
 
-    // Number of links to show before and after the current page.
-    // In addition to these, the first, last and intermediate links are also shown
-    let neighbours = 2; // items a mostrar alrededor el la pagina actuañ
+    // Numero de enlaces a mostrar antes y despues de la pagina actual.
+    // Ademas de estos, tambien se muestran los enlaces primero y ultimo, y entre medias.
+    var neighbours = 2; // items a mostrar alrededor el la pagina actuañ
 
-    const html = [];
+    var html = [];
 
     html.push('<ul class="pagination">');
 
-    // Modify neighbors to avoid having few buttons:
-    //  - If there is no space for the neighbors on the left, I show more by the right.
-    //  - If there is no space for the neighbors on the right, I show more by the left.
+    // reajustar neighbours para evitar botoneras pequeñas:
+    //  - Si no caben vecinos por la izquierda, muestro mas por la derecha.
+    //  - Si no caben vecinos por la derecha, muestro mas por la izquierda.
     if (currentPage - neighbours <= 2) {
         neighbours += 3 + neighbours - currentPage;
     } else if (total - currentPage - neighbours <= 1) {
         neighbours += 2 - total + currentPage + neighbours;
     }
 
-    // First page
+    // Primera pagina
     if (1 < currentPage - neighbours) {
         url = addPagenoToUrl(url, 1, param_name);
         html.push('<li> <a href="' + url + '">' + 1 + '</a></li>');
     }
 
-    // Previous pages: between the first page and the middle pages
+    // Anterior: entre primera y centrales
     if (currentPage - neighbours > 2) {
-        const n = Math.trunc(( 1 + currentPage - neighbours) / 2);
+        var n = Math.trunc(( 1 + currentPage - neighbours) / 2);
         url = addPagenoToUrl(url, n, param_name);
         html.push('<li> <a href="' + url + '">' + n + '</a></li>');
     }
 
-    // Pages in the middle
-    for (let i = 1; i <= total; i++) {
+    // Paginas centrales
+    for (var i = 1; i <= total; i++) {
         if (i === currentPage) {
             html.push('<li class="active"> <a href="#">' + i + '</a></li>');
         } else {
@@ -66,14 +66,14 @@ exports.paginate = (totalItems, itemsPerPage, currentPage, url, param_name) => {
         }
     }
 
-    // Next pages: betwenn the middle pages and the last page
+    // Siguientes: entre centrales y el final
     if (currentPage + neighbours < total - 1) {
-        const n = Math.trunc(( total + currentPage + neighbours + 1) / 2);
+        var n = Math.trunc(( total + currentPage + neighbours + 1) / 2);
         url = addPagenoToUrl(url, n, param_name);
         html.push('<li> <a href="' + url + '">' + n + '</a></li>');
     }
 
-    // Last page
+    // Ultima pagina
     if (total > currentPage + neighbours) {
         url = addPagenoToUrl(url, total, param_name);
         html.push('<li> <a href="' + url + '">' + total + '</a></li>');

@@ -1,37 +1,47 @@
+var crypto = require('crypto');
 
-const crypt = require('../helpers/crypt');
-
-// Definition of the User model:
+// Definicion de la clase User:
 
 module.exports = function (sequelize, DataTypes) {
-    const User = sequelize.define('user', {
-        username: {
-            type: DataTypes.STRING,
-            unique: true,
-            validate: {notEmpty: {msg: "Username must not be empty."}}
-        },
-        password: {
-            type: DataTypes.STRING,
-            validate: {notEmpty: {msg: "Password must not be empty."}},
-            set(password) {
-                // Random String used as salt.
-                this.salt = Math.round((new Date().valueOf() * Math.random())) + '';
-                this.setDataValue('password', crypt.encryptPassword(password, this.salt));
+    return sequelize.define('User',
+        {
+            username: {
+                type: DataTypes.STRING,
+                unique: true,
+                validate: {notEmpty: {msg: "Falta el username."}}
+            },
+            password: {
+                type: DataTypes.STRING,
+                validate: {notEmpty: {msg: "Falta el password."}},
+                set: function (password) {
+                    // String aleatorio usado como salt.
+                    this.salt = Math.round((new Date().valueOf() * Math.random())) + '';
+                    this.setDataValue('password', encryptPassword(password, this.salt));
+                }
+            },
+            salt: {
+                type: DataTypes.STRING
+            },
+            isAdmin: {
+                type: DataTypes.BOOLEAN,
+                defaultValue: false
             }
         },
-        salt: {
-            type: DataTypes.STRING
-        },
-        isAdmin: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
-        }
-    });
-
-    User.prototype.verifyPassword = function (password) {
-        return crypt.encryptPassword(password, this.salt) === this.password;
-    };
-
-    return User;
+        {
+            instanceMethods: {
+                verifyPassword: function (password) {
+                    return encryptPassword(password, this.salt) === this.password;
+                }
+            }
+        });
 };
 
+
+/*
+ * Encripta un password en claro.
+ * Mezcla un password en claro con el salt proporcionado, ejecuta un SHA1 digest,
+ * y devuelve 40 caracteres hexadecimales.
+ */
+function encryptPassword(password, salt) {
+    return crypto.createHmac('sha1', salt).update(password).digest('hex');
+};

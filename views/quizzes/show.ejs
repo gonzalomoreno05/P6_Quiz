@@ -1,31 +1,33 @@
 
 <div class="right">
-    <small> (by <%= quiz.author ? quiz.author.username : "Anonymous" %>) </small>
+    <small> (by <%= quiz.Author ? quiz.Author.username : "Anonymous" %>) </small>
 </div>
 
 <h1>
-    Show question:
+    Ver pregunta:
 </h1>
 
 <ul>
-    <li>Question: <b><%= quiz.question %></b></li>
-    <li>Answer: <b><%= quiz.answer %></b></li>
+    <li>Pregunta: <b><%= quiz.question %></b></li>
+    <li>Respuesta: <b><%= quiz.answer %></b></li>
 </ul>
+
+<a href="/goback"><button>volver</button></a>
 
 
 <h1>
-    Tips:
+    Pistas: meaning
 </h1>
 
 <% if (session.user) { %>
     <% include ../tips/new %>
 <% } %>
 
-<% var tips = quiz.tips; %>
+<% var tips = quiz.Tips; %>
 <% var quizId = quiz.id; %>
-<% var quizAuthorId = quiz.authorId; %>
+<% var quizAuthorId = quiz.AuthorId; %>
 
 <% include ../tips/index %>
 
 
-<a href="/goback"><button>Go back</button></a>
+<a href="/quizzes"><button>Volver</button></a>

@@ -1,13 +1,13 @@
 
 <div class="right">
     <form method="get" action="/quizzes">
-        <input type="text" name="search" value="<%= locals.search || '' %>" placeholder="question to search" autocomplete="off" />
-        <input type="submit" value="Search">
+        <input type="text" name="search" value="<%= locals.search || '' %>" placeholder="pregunta a buscar" autocomplete="off" />
+        <input type="submit" value="Buscar">
     </form>
 </div>
 
 <h1>
-    <%= title || "Questions" %>:
+    <%= title || "Preguntas" %>:
 </h1>
 
 <table>
@@ -18,21 +18,21 @@
             <a href="/quizzes/<%= quiz.id %>/play"><%= quiz.question %></a>
         </td>
         <td colspan="2">
-            <small> (by <%= quiz.author ? quiz.author.username : "Anonymous" %>) </small>
+            <small> (by <%= quiz.Author ? quiz.Author.username : "Anómino" %>) </small>
         </td>
 
         <% if (session.user) { %>
-            <% if (session.user.isAdmin || session.user.id === quiz.authorId) { %>
+            <% if (session.user.isAdmin || session.user.id === quiz.AuthorId) { %>
                 <td>
-                    <a href="/quizzes/<%= quiz.id %>"><button>show</button></a>
+                    <a href="/quizzes/<%= quiz.id %>"><button>ver</button></a>
                 </td>
                 <td>
-                    <a href="/quizzes/<%= quiz.id %>/edit"><button>edit</button></a>
+                    <a href="/quizzes/<%= quiz.id %>/edit"><button>editar</button></a>
                 </td>
                 <td>
                     <a href="/quizzes/<%= quiz.id %>?_method=DELETE"
-                       onClick="return confirm('Delete: <%= quiz.question %>');">
-                        <button>delete</button>
+                       onClick="return confirm('Borrar: <%= quiz.question %>');">
+                        <button>borrar</button>
                     </a>
                 </td>
             <% } %>
@@ -42,5 +42,5 @@
 </table>
 
 <% if (session.user) { %>
-    <a href="/quizzes/new"><button type="button">Create New Question</button></a>
+    <a href="/quizzes/new"><button type="button">Crear pregunta</button></a>
 <% } %>

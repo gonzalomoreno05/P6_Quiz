@@ -19,12 +19,16 @@ body {
     background: #eee;
 }
 
-#mainHeader, #mainNav, #mainFooter {
+#mainHeader {
     text-align: center;
 }
 
 #mainHeader h1 {
     margin: 8px;
+}
+
+#mainNav {
+    text-align: center;
 }
 
 #mainNav a {
@@ -34,6 +38,10 @@ body {
 #mainSection {
     padding: 20px;
     text-align: left;
+}
+
+#mainFooter {
+    text-align: center;
 }
 
 a {
@@ -86,7 +94,6 @@ a {
     font-size: 12px;
     list-style: square;
 }
-
 
 #flashsuccess {
     width: auto;

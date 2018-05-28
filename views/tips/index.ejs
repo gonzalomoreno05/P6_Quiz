@@ -6,44 +6,41 @@
         <% var accepted = tip.accepted; %>
         <% var isAdmin = session.user && session.user.isAdmin; %>
         <% var isQuizAuthor = session.user && quizAuthorId && quizAuthorId === session.user.id; %>
+	    <% var isTipAuthor = session.user && tip.Author.username && tip.Author.username === session.user.username; %>
 
-
-
-        <% var isTipAuthor = session.user && tip.authorId===session.user.id %>
-
-
-
-        <% if (accepted || isAdmin || isQuizAuthor) { %>
+        <% if (accepted || isAdmin || isQuizAuthor || isTipAuthor) { %>
 
             <li>
-                <%= tip.text %>
+                <%= tip.text; %>
 
-                <small> (by <%= quiz.author ? quiz.author.username : "Anonymous" %>) </small>
+                     (by <span id="autor"><%= tip.Author.username %></span>)
+
+                    <% if (isAdmin || isTipAuthor) { %>
+                    <a href="/tips/<%= tip.id %>/edit">
+                        <button>Edit</button>
+                    </a>
+                    <% } %>
+
 
                 <% if (!accepted && (isAdmin || isQuizAuthor)) { %>
 
-                    <a href="/quizzes/<%= quizId %>/tips/<%= tip.id %>/accept?_method=PUT">
-                        <button>Accept</button>
-                    </a>
+                      <a href="/quizzes/<%= quizId %>/tips/<%= tip.id %>/accept?_method=PUT">
+                          <button>Aceptar</button>
+                      </a>
+
+                <% } %>
+
+                <% if (isAdmin || isQuizAuthor || isTipAuthor) { %>
+
+                      <a href="/quizzes/<%= quizId %>/tips/<%= tip.id %>?_method=DELETE">
+                           <button>Borrar</button>
+                      </a>
 
                 <% } %>
 
 
+             </li>
+         <% } %>
 
-
-
-                <% if (isAdmin || isTipAuthor) { %>
-                <a href="/quizzes/<%=quiz.id%>/tips/<%=tip.id%>/edit">
-                    <button>Edit</button>
-                </a>
-
-                <a href="/quizzes/<%= quizId %>/tips/<%= tip.id %>?_method=DELETE">
-                    <button>Delete</button>
-                </a>
-                <% } %>
-
-
-            </li>
-        <% } %>
     <% } %>
 </ul>

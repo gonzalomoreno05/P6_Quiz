@@ -1,23 +1,21 @@
-
 <h1>
-    Random Play:
+    Juego Aleatorio:
 </h1>
 
 <div>
-    Successful answers = <span id="score"><%= score %></span>
+    Preguntas acertadas = <span id="score"><%= score %></span>
 </div>
 
 <p>
-    The answer <strong> <%= answer %> </strong> is <%= result ? 'right' : 'wrong' %>.
+    La respuesta <strong> <%= answer %> </strong> es <%= result ? 'Correcta' : 'Incorrecta' %>.
 </p>
 
 <p>
     <% if (!result) { %>
-    You have failed.
-    <a href="/quizzes"> End of Play </a>
+    Has fallado.
+    <a href="/quizzes"> FIN </a>
     <% } else { %>
-    You have succeeded.
-    <a href="/quizzes/randomplay"><button>Continue playing</button></a>
+    Has acertado.
+    <a href="/quizzes/randomplay"><button>Continuar jugando</button></a>
     <% } %>
 </p>
-

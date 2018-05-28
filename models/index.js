@@ -1,69 +1,52 @@
-const path = require('path');
+var path = require('path');
 
-// Load ORM
-const Sequelize = require('sequelize');
+// Cargar ORM
+var Sequelize = require('sequelize');
 
-
-// To use SQLite data base:
-//    DATABASE_URL = sqlite:quiz.sqlite
-// To use  Heroku Postgres data base:
+// Para usar en local BBDD SQLite:
+//    DATABASE_URL = sqlite:///
+//    DATABASE_STORAGE = quiz.sqlite
+// Para usar en Heroku BBDD Postgres:
 //    DATABASE_URL = postgres://user:passwd@host:port/database
 
-const url = process.env.DATABASE_URL || "sqlite:quiz.sqlite";
+var url, storage;
 
-const sequelize = new Sequelize(url);
+if (!process.env.DATABASE_URL) {
+    url = "sqlite:///";
+    storage = "quiz.sqlite";
+} else {
+    url = process.env.DATABASE_URL;
+    storage = process.env.DATABASE_STORAGE || "";
+}
 
-// Import the definition of the Quiz Table from quiz.js
-sequelize.import(path.join(__dirname, 'quiz'));
-
-// Import the definition of the Tips Table from tip.js
-sequelize.import(path.join(__dirname,'tip'));
-
-// Import the definition of the Users Table from user.js
-sequelize.import(path.join(__dirname,'user'));
-
-// Session
-sequelize.import(path.join(__dirname,'session'));
-
-
-// Relation between models
-
-const {quiz, tip, user} = sequelize.models;
-
-tip.belongsTo(quiz);
-quiz.hasMany(tip);
-
-// Relation 1-to-N between User and Quiz:
-user.hasMany(quiz, {foreignKey: 'authorId'});
-quiz.belongsTo(user, {as: 'author', foreignKey: 'authorId'});
-user.hasMany(tip, {foreignKey: 'authorId'});
-tip.belongsTo(user, {as: 'author', foreignKey: 'authorId'});
-
-sequelize.sync()
-    .then(()=> sequelize.models.quiz.count())
-    .then(count => {
-        if(!count) {
-            return sequelize.models.quiz.bulkCreate([
-                {question: "Capital de Italia", answer: "Roma"},
-                {question: "Capital de Francia", answer: "París"},
-                {question: "Capital de España", answer: "Madrid"},
-                {question: "Capital de Portugal", answer: "Lisboa"}
-            ]);
-        }
-    })
-    .catch(error => {
-        console.log(error);
-    });
-
-
-// Create tables
-sequelize.sync()
-.then(() => console.log('Data Bases created successfully'))
-.catch(error => {
-    console.log("Error creating the data base tables:", error);
-    process.exit(1);
-});
+var sequelize = new Sequelize(url, {storage: storage});
 
 
 
-module.exports = sequelize;
+// Importar la definicion de la tabla Quiz de quiz.js
+var Quiz = sequelize.import(path.join(__dirname, 'quiz'));
+
+
+// Importar la definicion de la tabla Tips de tips.js
+var Tip = sequelize.import(path.join(__dirname,'tip'));
+
+// Importar la definicion de la tabla Users de user.js
+var User = sequelize.import(path.join(__dirname,'user'));
+
+
+// Relaciones entre modelos
+Tip.belongsTo(Quiz);
+Quiz.hasMany(Tip);
+
+// Relacion 1 a N entre User y Quiz:
+User.hasMany(Quiz, {foreignKey: 'AuthorId'});
+Quiz.belongsTo(User, {as: 'Author', foreignKey: 'AuthorId'});
+
+// Relacion 1 a N entre User y Tip:
+User.hasMany(Tip, {foreignKey: 'AuthorId'} );
+Tip.belongsTo(User, {as: 'Author', foreignKey: 'AuthorId'})
+
+
+exports.Quiz = Quiz; // exportar definición de tabla Quiz
+exports.Tip = Tip;   // exportar definición de tabla Tips
+exports.User = User; // exportar definición de tabla Users
